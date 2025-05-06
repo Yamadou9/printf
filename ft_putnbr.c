@@ -2,11 +2,12 @@
 #include <fcntl.h>
 #include <stdlib.h>
 #include <limits.h>
+#include<stdio.h>
+
+int	ft_putchar(int c, int count);
 
 int	ft_putnbr(long long n, int count)
 {
-	char	d;
-
 	if (n == LLONG_MIN)
 	{
 		write(1, "-9223372036854775808", 20);
@@ -15,16 +16,11 @@ int	ft_putnbr(long long n, int count)
 	}
 	if (n < 0)
 	{
-		write(1, "-", 1);
-		count++;
+		count = ft_putchar('-', count);
 		n = n * -1;
 	}
 	if (n < 10)
-	{
-		d = n + 48;
-		write(1, &d, 1);
-		count++;
-	}
+		count = ft_putchar(n + 48, count);
 	else
 	{
 		count = ft_putnbr(n / 10, count);
@@ -33,13 +29,11 @@ int	ft_putnbr(long long n, int count)
 	return (count);
 }
 
-/*int	main(int ac, char **av)
-{
-	int	fd;
-	int	n;
+// int	main(int ac, char **av)
+// {
+// 	int	fd;
+// 	int	n;
 
-	fd = open(av[2], O_WRONLY);
-	printf("%d", fd);
-	n = atoi(av[1]);	
-	ft_putnbr_fd(n, fd);
-}*/
+// 	n = atoi(av[1]);	
+// 	ft_putnbr(n, fd);
+// }
