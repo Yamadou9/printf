@@ -1,4 +1,3 @@
-
 NAME = libftprintf.a
 
 SRC =   ft_hexa.c ft_putnbr.c ft_type.c

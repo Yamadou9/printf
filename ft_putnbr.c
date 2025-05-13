@@ -1,10 +1,37 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_putnbr.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/13 16:18:21 by ydembele          #+#    #+#             */
+/*   Updated: 2025/05/13 16:40:14 by ydembele         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <unistd.h>
 #include <fcntl.h>
 #include <stdlib.h>
 #include <limits.h>
 #include<stdio.h>
+#include "ft_printf.h"
 
-int	ft_putchar(int c, int count);
+int	ft_putchar(int c, int count)
+{
+	write(1, &c, 1);
+	return (count + 1);
+}
+
+size_t	ft_strlen(char *str)
+{
+	size_t	i;
+
+	i = 0;
+	while (str[i])
+		i++;
+	return (i);
+}
 
 int	ft_putnbr(long long n, int count)
 {
@@ -29,11 +56,14 @@ int	ft_putnbr(long long n, int count)
 	return (count);
 }
 
-// int	main(int ac, char **av)
-// {
-// 	int	fd;
-// 	int	n;
-
-// 	n = atoi(av[1]);	
-// 	ft_putnbr(n, fd);
-// }
+int	ft_put_unsigned(unsigned int nb, int count)
+{
+	if (nb < 10)
+		count = ft_putchar(nb + 48, count);
+	else
+	{
+		count = ft_put_unsigned(nb / 10, count);
+		count = ft_put_unsigned(nb % 10, count);
+	}
+	return (count);
+}

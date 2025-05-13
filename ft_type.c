@@ -1,42 +1,42 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_type.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/13 16:18:45 by ydembele          #+#    #+#             */
+/*   Updated: 2025/05/13 16:42:52 by ydembele         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <stdio.h>
 #include <stdarg.h>
 #include <unistd.h>
 #include <limits.h>
-
-int	ft_itoa(int n, char *base, int count);
-int	ft_putnbr(long long d, int count);
-int	ft_itoavoid(void *n, char *base, int count);
+#include "stddef.h"
+#include "ft_printf.h"
 
 int	ft_putstr(char *s, int count)
 {
 	int	i;
 
 	i = 0;
+	if (!s)
+	{
+		write(1, "(null)", 6);
+		return (count + 6);
+	}
 	while (s[i])
 		write(1, &s[i++], 1);
 	count += i;
 	return (count);
 }
 
-int	ft_putchar(int c, int count)
-{
-	write(1, &c, 1);
-	return(count + 1);
-}
-
-typedef struct ft_type
-{
-	long	d;
-	unsigned long long l;
-	char *str;
-	char c;
-	void *v;
-} s_point;
-
 int	is_format(char c)
 {
-	char *format;
 	int		i;
+	char	*format;
 
 	i = 0;
 	format = "cspdiuxX";
@@ -51,25 +51,28 @@ int	is_format(char c)
 
 int	print_format(va_list ar, int count, char signe)
 {
-	if ((signe == 's'))
+	void	*vide;
+
+	if (signe == 's')
 		count = ft_putstr(va_arg(ar, char *), count);
 	else if (signe == 'c')
 		count = ft_putchar(va_arg(ar, int), count);
-	else if (signe == 'd' || signe == 'i' || signe == 'u')
+	else if (signe == 'd' || signe == 'i')
 		count = ft_putnbr(va_arg(ar, int), count);
+	else if (signe == 'u')
+		count = ft_put_unsigned(va_arg(ar, unsigned int), count);
 	else if (signe == 'x')
-		count = ft_print_hexa(va_arg(ar, unsigned int), count);
+		count = ft_print_hexa(va_arg(ar, int), count);
 	else if (signe == 'X')
-		count = ft_print_HEXA(va_arg(ar, unsigned int int), count);
+		count = ft_print_hexmaj(va_arg(ar, int), count);
 	else if (signe == 'p')
 	{
+		vide = va_arg(ar, void *);
+		if (!vide)
+			return (ft_putstr("(nil)", count));
 		write(1, "0x", 2);
-		count = ft_print_hexa(va_arg(ar, void *), count) + 2;
+		count = ft_print_pointer(vide, count) + 2;
 	}
-	else if (signe == '%')
-		count = ft_putchar(signe, count);
-	else if (signe == '%' && is_format(signe))
-		;
 	return (count);
 }
 
@@ -84,25 +87,35 @@ int	ft_printf(const char	*s, ...)
 	va_start(ar, s);
 	while (s[i])
 	{
-		if (s[i] == '%' && s[i + 1])
-			count = printf_format(ar, count, s[i + 1]);
-		else if (s[i - 2] == '%' && s[i - 1] == '%' && is_format(s[i]))
+		if (s[i] == '%' && s[i + 1] && is_format(s[i + 1]))
+		{
+			count = print_format(ar, count, s[i + 1]);
+			i++;
+		}
+		else if (s[i] == '%' && s[i + 1] && s[i + 1] == '%')
+		{
 			count = ft_putchar(s[i], count);
+			i++;
+		}
 		else
 			count = ft_putchar(s[i], count);
 		i++;
 	}
 	return (count);
 }
-int	main()
-{
-	char	*ko;
-	char c = 'd';
-	unsigned int		n = 0xff;
-	char *s;
-	int d = -48;
+// int	main()
+// {
+// 	char	*ko;
+// 	char c = 'd';
+// 	unsigned int		n = 44444445;
+// 	char *s;
+// 	int d = 0;
 
-	s = "bonjour";
-	ko = "oul";
-	ft_printf("%s", s);
-}
+// 	s = "bonjour";
+// 	ko = "oul";
+// 	ft_printf("%u%%, %p\n", n, 0);
+// 	printf("%u%%, %p\n", n, 0);
+// 	// printf(" NULL %s NULL \n", (char *)NULL);
+// 	// ft_printf(" NULL %s NULL \n", (char *)NULL);
+
+// }
